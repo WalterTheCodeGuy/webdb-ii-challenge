@@ -4,7 +4,7 @@ const knex = require('knex');
 const db = knex({
   client: 'sqlite3',
   connection: {
-    filename: './data/cars.db3'
+    filename: './dev.sqlite3'
   },
   useNullAsDefault: true
 });
@@ -34,8 +34,22 @@ router.get('/', (req, res) => {
           res.status(200).json(cars);
       })
       .catch(error => {
+        console.log('GET error', error);
           res.status(500).json({ message: 'Failed to retrieve cars', error });
       });
+});
+
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+
+  db('cars').where({ id }).first()
+  .then(car => {
+    res.json(car);
+  }) 
+  .catch (error => {
+    console.log('GET error', error);
+    res.status(500).json({ message: 'Failed to retrieve car', error });
+  });
 });
 
 module.exports = router;
